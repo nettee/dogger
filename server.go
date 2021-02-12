@@ -7,13 +7,12 @@ import (
 	"os"
 )
 
-type HttpHandler struct {
-}
+func handleRoot(w http.ResponseWriter, r *http.Request) {
+	fmt.Printf("> %v %v\n", r.Method, r.URL)
+	fmt.Printf("%v\n", r.Body)
 
-func (handler HttpHandler) ServeHTTP(response http.ResponseWriter, request *http.Request) {
-	fmt.Printf("> %v %v\n", request.Method, request.URL)
-	fmt.Printf("%v\n", request.Body)
-	_, _ = fmt.Fprintf(response, "hello, docker\n")
+	w.WriteHeader(http.StatusInternalServerError)
+	_, _ = w.Write([]byte("not implemented by dogger"))
 }
 
 func serve(sockFile string) {
@@ -25,7 +24,7 @@ func serve(sockFile string) {
 
 	fmt.Printf("listen to %v...\n", sockFile)
 
-	http.Handle("/", HttpHandler{})
+	http.HandleFunc("/", handleRoot)
 	_ = http.Serve(listener, nil)
 }
 
